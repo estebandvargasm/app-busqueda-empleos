@@ -1,3 +1,9 @@
+/**
+ * Estado global de empleos con Zustand.
+ * - Carga la lista de empleos desde la API de Remotive.
+ * - Gestiona favoritos (toggle + persistencia en AsyncStorage).
+ * - Expone estado de carga/error y las acciones para las pantallas.
+ */
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import AsyncStorage from '@react-native-async-storage/async-storage'

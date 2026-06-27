@@ -1,16 +1,19 @@
+import { router } from 'expo-router'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import type { JobItem } from '../types/job'
 
 type Props = {
   job: JobItem
   isFavorite?: boolean
-  onPress?: () => void
   onToggleFavorite?: () => void
 }
 
-export function JobListItem({ job, isFavorite, onPress, onToggleFavorite }: Props) {
+export function JobListItem({ job, isFavorite, onToggleFavorite }: Props) {
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => router.push({ pathname: '/job/[id]', params: { id: job.id } })}
+    >
       {/* Logo */}
       {job.companyLogoUrl ? (
         <Image source={{ uri: job.companyLogoUrl }} style={styles.logo} />

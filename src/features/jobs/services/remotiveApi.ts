@@ -1,3 +1,7 @@
+/**
+ * Cliente HTTP para la API pública de Remotive (remote jobs).
+ * fetchJobs() obtiene los empleos remotos y los mapea al modelo JobItem.
+ */
 import axios from 'axios'
 import type { JobItem } from '../types/job'
 import { mapRemotiveJobToJobItem } from './remotiveMapper'

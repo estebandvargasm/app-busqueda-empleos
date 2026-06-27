@@ -1,6 +1,6 @@
 /**
  * Estado global de empleos con Zustand.
- * - Carga la lista de empleos desde la API de Remotive.
+ * - Carga la lista de empleos y categorías desde la API de Remotive.
  * - Gestiona favoritos (toggle + persistencia en AsyncStorage).
  * - Expone estado de carga/error y las acciones para las pantallas.
  */
@@ -8,16 +8,18 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import type { JobItem } from '../types/job'
-import { fetchJobs } from '../services/remotiveApi'
+import { fetchJobs, fetchCategories } from '../services/remotiveApi'
 
 type Status = 'idle' | 'loading' | 'error' | 'empty'
 
 type JobsState = {
   jobs: JobItem[]
   favorites: JobItem[]
+  categories: string[]
   status: Status
   error: string | null
   loadJobs: () => Promise<void>
+  loadCategories: () => Promise<void>
   toggleFavorite: (job: JobItem) => void
   isFavorite: (jobId: number) => boolean
 }
@@ -27,6 +29,7 @@ export const useJobsStore = create<JobsState>()(
     (set, get) => ({
       jobs: [],
       favorites: [],
+      categories: [],
       status: 'idle',
       error: null,
 
@@ -43,6 +46,15 @@ export const useJobsStore = create<JobsState>()(
             status: 'error',
             error: 'No se pudieron cargar los empleos',
           })
+        }
+      },
+
+      async loadCategories() {
+        try {
+          const categories = await fetchCategories()
+          set({ categories })
+        } catch {
+          // Si falla, se sigue usando lo que haya en el store
         }
       },
 

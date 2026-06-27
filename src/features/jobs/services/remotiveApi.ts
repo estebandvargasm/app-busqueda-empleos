@@ -21,3 +21,17 @@ export async function fetchJobs(): Promise<JobItem[]> {
 
   return jobs.map(mapRemotiveJobToJobItem)
 }
+
+type RemotiveCategory = { id: number; name: string; slug: string }
+
+type RemotiveCategoriesResponse = {
+  jobs: RemotiveCategory[]
+}
+
+export async function fetchCategories(): Promise<string[]> {
+  const response = await axios.get<RemotiveCategoriesResponse>(
+    `${REMOTIVE_BASE_URL}/remote-jobs/categories`,
+  )
+
+  return response.data.jobs.map((cat) => cat.name).sort()
+}

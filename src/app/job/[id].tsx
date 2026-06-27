@@ -3,6 +3,7 @@ import * as WebBrowser from 'expo-web-browser'
 import {
   Image,
   ScrollView,
+  Share,
   StyleSheet,
   TouchableOpacity,
 } from 'react-native'
@@ -44,6 +45,13 @@ export default function JobDetailScreen() {
 
   const handleApply = () => {
     WebBrowser.openBrowserAsync(job.applyUrl)
+  }
+
+  const handleShare = () => {
+    Share.share({
+      message: `${job.title} en ${job.companyName}\n${job.applyUrl}`,
+      url: job.applyUrl,
+    })
   }
 
   return (
@@ -128,6 +136,15 @@ export default function JobDetailScreen() {
           >
             {isFavorite(job.id) ? 'En favoritos' : 'Guardar en favoritos'}
           </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.shareButton}
+          onPress={handleShare}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="share-outline" size={20} color={colors.text} />
+          <Text style={styles.shareButtonText}>Compartir</Text>
         </TouchableOpacity>
       </View>
 
@@ -247,6 +264,20 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   favoriteButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  shareButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 12,
+  },
+  shareButtonText: {
     fontSize: 14,
     fontWeight: '600',
   },

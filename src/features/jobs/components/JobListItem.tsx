@@ -27,7 +27,7 @@ export function JobListItem({ job, isFavorite, onToggleFavorite }: Props) {
         <Text style={styles.company}>{job.companyName}</Text>
         <Text style={styles.location}>{job.candidateLocation}</Text>
         <Text style={styles.meta}>
-          {job.category} • {job.jobType}
+          {job.category} • {job.jobType} • {new Date(job.publicationDate).toLocaleDateString()}
         </Text>
       </View>
 

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Modal, FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
-import FontAwesome from '@expo/vector-icons/FontAwesome'
+import { Ionicons } from '@expo/vector-icons'
 
 interface FilterDropdownProps {
   label: string
@@ -20,12 +20,13 @@ export default function FilterDropdown({ label, options, selected, onSelect }: F
         <Text style={[styles.triggerText, !!selected && styles.triggerTextActive]} numberOfLines={1}>
           {displayText}
         </Text>
-        <FontAwesome name="chevron-down" size={10} color="#888" />
+        <Ionicons name="chevron-down" size={12} color={selected ? '#3b6df0' : '#b0b3c1'} />
       </Pressable>
 
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
         <Pressable style={styles.overlay} onPress={() => setOpen(false)}>
           <View style={styles.sheet}>
+            <View style={styles.handle} />
             <Text style={styles.sheetTitle}>{label}</Text>
 
             <FlatList
@@ -45,7 +46,7 @@ export default function FilterDropdown({ label, options, selected, onSelect }: F
                     <Text style={[styles.optionText, isSelected && styles.optionTextSelected]}>
                       {item}
                     </Text>
-                    {isSelected && <FontAwesome name="check" size={14} color="#007AFF" />}
+                    {isSelected && <Ionicons name="checkmark" size={18} color="#3b6df0" />}
                   </Pressable>
                 )
               }}
@@ -62,37 +63,51 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     flex: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    elevation: 1,
   },
   triggerText: {
     fontSize: 13,
-    color: '#999',
+    color: '#8e92a2',
     flex: 1,
   },
   triggerTextActive: {
-    color: '#333',
+    color: '#1a1a2e',
+    fontWeight: '500',
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.35)',
+    backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'flex-end',
   },
   sheet: {
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    paddingTop: 20,
+    backgroundColor: '#ffffff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     paddingBottom: 34,
     maxHeight: '60%',
   },
+  handle: {
+    width: 36,
+    height: 4,
+    backgroundColor: '#d0d3dc',
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginTop: 12,
+    marginBottom: 16,
+  },
   sheetTitle: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#1a1a2e',
     marginBottom: 8,
     paddingHorizontal: 20,
   },
@@ -100,17 +115,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 12,
+    paddingVertical: 14,
     paddingHorizontal: 20,
   },
   optionSelected: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#eef2ff',
   },
   optionText: {
     fontSize: 15,
-    color: '#333',
+    color: '#1a1a2e',
   },
   optionTextSelected: {
     fontWeight: '600',
+    color: '#3b6df0',
   },
 })

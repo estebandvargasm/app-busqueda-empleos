@@ -14,23 +14,27 @@ export default function FavoritesScreen() {
   if (favorites.length === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <Ionicons name="heart-outline" size={64} color={colors.tabIconDefault} />
+        <Ionicons name="heart-outline" size={72} color="#d0d3dc" />
         <Text style={styles.emptyTitle}>Sin favoritos aún</Text>
         <Text style={styles.emptySubtitle}>
-          Guarda empleos tocando el ícono de estrella{'\n'}y los verás aquí.
+          Guarda empleos tocando el ícono del corazón{'\n'}y los verás aquí.
         </Text>
       </View>
     )
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.screen}>
       <FlatList
         data={favorites}
         keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={styles.listContent}
         ListHeaderComponent={
           <View style={styles.header}>
-            <Text style={styles.headerText}>{favorites.length} empleo{favorites.length === 1 ? '' : 's'} guardado{favorites.length === 1 ? '' : 's'}</Text>
+            <Ionicons name="heart" size={14} color="#ef4444" />
+            <Text style={styles.headerText}>
+              {favorites.length} empleo{favorites.length === 1 ? '' : 's'} guardado{favorites.length === 1 ? '' : 's'}
+            </Text>
           </View>
         }
         renderItem={({ item }) => (
@@ -46,32 +50,42 @@ export default function FavoritesScreen() {
 }
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: '#f5f6fa',
+  },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 32,
+    backgroundColor: '#f5f6fa',
     gap: 12,
   },
   emptyTitle: {
-    fontSize: 18,
+    fontSize: 19,
     fontWeight: '700',
+    color: '#1a1a2e',
   },
   emptySubtitle: {
-    fontSize: 14,
+    fontSize: 15,
     textAlign: 'center',
-    opacity: 0.6,
-    lineHeight: 20,
+    color: '#8e92a2',
+    lineHeight: 22,
+  },
+  listContent: {
+    paddingBottom: 20,
   },
   header: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 12,
   },
   headerText: {
     fontSize: 13,
     fontWeight: '600',
-    opacity: 0.6,
+    color: '#8e92a2',
   },
 })

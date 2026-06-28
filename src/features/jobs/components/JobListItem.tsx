@@ -1,5 +1,6 @@
 import { router } from 'expo-router'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
 import type { JobItem } from '../types/job'
 
 type Props = {
@@ -11,77 +12,115 @@ type Props = {
 export function JobListItem({ job, isFavorite, onToggleFavorite }: Props) {
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={styles.card}
+      activeOpacity={0.7}
       onPress={() => router.push({ pathname: '/job/[id]', params: { id: job.id } })}
     >
-      {/* Logo */}
-      {job.companyLogoUrl ? (
-        <Image source={{ uri: job.companyLogoUrl }} style={styles.logo} />
-      ) : (
-        <View style={[styles.logo, styles.logoPlaceholder]} />
-      )}
+      <View style={styles.cardInner}>
+        {job.companyLogoUrl ? (
+          <Image source={{ uri: job.companyLogoUrl }} style={styles.logo} />
+        ) : (
+          <View style={styles.logoPlaceholder}>
+            <Ionicons name="business-outline" size={22} color="#b0b3c1" />
+          </View>
+        )}
 
-      {/* Info principal */}
-      <View style={styles.info}>
-        <Text style={styles.title}>{job.title}</Text>
-        <Text style={styles.company}>{job.companyName}</Text>
-        <Text style={styles.location}>{job.candidateLocation}</Text>
-        <Text style={styles.meta}>
-          {job.category} • {job.jobType} • {new Date(job.publicationDate).toLocaleDateString()}
-        </Text>
+        <View style={styles.info}>
+          <Text style={styles.title} numberOfLines={2}>{job.title}</Text>
+          <Text style={styles.company} numberOfLines={1}>{job.companyName}</Text>
+          <View style={styles.metaRow}>
+            <Ionicons name="location-outline" size={11} color="#8e92a2" />
+            <Text style={styles.location} numberOfLines={1}>{job.candidateLocation}</Text>
+          </View>
+          <View style={styles.metaRow}>
+            <Ionicons name="time-outline" size={11} color="#8e92a2" />
+            <Text style={styles.date}>
+              {job.category} • {job.jobType} • {new Date(job.publicationDate).toLocaleDateString()}
+            </Text>
+          </View>
+        </View>
+
+        <TouchableOpacity
+          style={styles.favoriteButton}
+          onPress={onToggleFavorite}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Ionicons
+            name={isFavorite ? 'heart' : 'heart-outline'}
+            size={20}
+            color={isFavorite ? '#ef4444' : '#b0b3c1'}
+          />
+        </TouchableOpacity>
       </View>
-
-      {/* Favorito */}
-      <TouchableOpacity
-        style={styles.favoriteButton}
-        onPress={onToggleFavorite}
-        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-      >
-        <Text style={{ fontSize: 18 }}>{isFavorite ? '★' : '☆'}</Text>
-      </TouchableOpacity>
     </TouchableOpacity>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
+  card: {
+    marginHorizontal: 12,
+    marginVertical: 5,
+    backgroundColor: '#ffffff',
+    borderRadius: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  cardInner: {
     flexDirection: 'row',
-    padding: 12,
-    borderBottomWidth: 1,
-    borderColor: '#eee',
-    alignItems: 'center',
+    padding: 14,
+    alignItems: 'flex-start',
   },
   logo: {
-    width: 40,
-    height: 40,
-    borderRadius: 4,
-    marginRight: 12,
+    width: 48,
+    height: 48,
+    borderRadius: 10,
+    marginRight: 14,
   },
   logoPlaceholder: {
-    backgroundColor: '#ddd',
+    width: 48,
+    height: 48,
+    borderRadius: 10,
+    marginRight: 14,
+    backgroundColor: '#f0f1f5',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   info: {
     flex: 1,
+    gap: 3,
   },
   title: {
-    fontWeight: 'bold',
-    fontSize: 14,
+    fontWeight: '600',
+    fontSize: 15,
+    color: '#1a1a2e',
+    lineHeight: 20,
   },
   company: {
     fontSize: 13,
-    color: '#555',
+    color: '#3b6df0',
+    fontWeight: '500',
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 1,
   },
   location: {
     fontSize: 12,
-    color: '#777',
+    color: '#8e92a2',
+    flex: 1,
   },
-  meta: {
+  date: {
     fontSize: 11,
-    color: '#999',
-    marginTop: 4,
+    color: '#8e92a2',
+    flex: 1,
   },
   favoriteButton: {
-    paddingHorizontal: 4,
-    paddingVertical: 2,
+    paddingLeft: 10,
+    paddingTop: 2,
   },
 })

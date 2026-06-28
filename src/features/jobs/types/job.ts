@@ -10,4 +10,5 @@ export interface JobItem {
   salary?: string
   descriptionHtml: string
   applyUrl: string
+  tags?: string[]
 }

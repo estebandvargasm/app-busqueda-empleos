@@ -49,7 +49,7 @@ export default function JobsListScreen() {
   if (status === 'loading' && jobs.length === 0) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator />
+        <ActivityIndicator size="large" color="#3b6df0" />
         <Text style={styles.centeredText}>Cargando empleos...</Text>
       </View>
     )
@@ -58,19 +58,20 @@ export default function JobsListScreen() {
   if (status === 'error') {
     return (
       <View style={styles.centered}>
+        <Ionicons name="cloud-offline-outline" size={48} color="#b0b3c1" />
         <Text style={styles.centeredText}>{error}</Text>
       </View>
     )
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.screen}>
       <View style={styles.searchContainer}>
-        <Ionicons name="search-outline" size={18} color="#999" style={styles.searchIcon} />
+        <Ionicons name="search-outline" size={18} color="#8e92a2" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
           placeholder="Buscar por título o empresa..."
-          placeholderTextColor="#999"
+          placeholderTextColor="#b0b3c1"
           value={searchQuery}
           onChangeText={setSearchQuery}
           autoCorrect={false}
@@ -98,8 +99,10 @@ export default function JobsListScreen() {
         keyExtractor={(item) => item.id.toString()}
         onRefresh={handleRefresh}
         refreshing={status === 'loading'}
+        contentContainerStyle={styles.listContent}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
+            <Ionicons name="briefcase-outline" size={56} color="#d0d3dc" />
             <Text style={styles.emptyText}>
               {searchQuery || categoryFilter || typeFilter
                 ? 'No se encontraron empleos con los filtros seleccionados.'
@@ -120,35 +123,45 @@ export default function JobsListScreen() {
 }
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: '#f5f6fa',
+  },
   centered: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: 32,
+    backgroundColor: '#f5f6fa',
+    gap: 16,
   },
   centeredText: {
-    marginTop: 8,
-    fontSize: 14,
-    color: '#666',
+    fontSize: 15,
+    color: '#8e92a2',
+    textAlign: 'center',
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: 12,
-    marginTop: 10,
-    marginBottom: 4,
-    backgroundColor: '#f2f2f2',
-    borderRadius: 10,
-    paddingHorizontal: 12,
+    marginTop: 12,
+    backgroundColor: '#ffffff',
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    elevation: 1,
   },
   searchIcon: {
-    marginRight: 8,
+    marginRight: 10,
   },
   searchInput: {
     flex: 1,
-    paddingVertical: 10,
-    fontSize: 14,
-    color: '#333',
+    paddingVertical: 12,
+    fontSize: 15,
+    color: '#1a1a2e',
   },
   filters: {
     flexDirection: 'row',
@@ -156,13 +169,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
   },
+  listContent: {
+    paddingBottom: 20,
+  },
   emptyContainer: {
-    padding: 40,
+    paddingVertical: 80,
     alignItems: 'center',
+    gap: 16,
   },
   emptyText: {
-    fontSize: 14,
-    color: '#999',
+    fontSize: 15,
+    color: '#8e92a2',
     textAlign: 'center',
+    lineHeight: 22,
   },
 })

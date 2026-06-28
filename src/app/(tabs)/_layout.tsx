@@ -15,8 +15,6 @@ export default function TabLayout() {
         tabBarInactiveTintColor: colors.tabIconDefault,
         tabBarStyle: {
           backgroundColor: colors.tabBar,
-          borderTopColor: colors.border,
-          borderTopWidth: 1,
           paddingBottom: 8,
           paddingTop: 8,
           height: 60,

@@ -62,11 +62,6 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     backgroundColor: '#ffffff',
     borderRadius: 14,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 2,
   },
   cardInner: {
     flexDirection: 'row',

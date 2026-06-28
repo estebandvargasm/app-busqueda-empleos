@@ -49,7 +49,7 @@ export default function FilterDropdown({ label, options, selected, onSelect }: F
                   <Pressable
                     style={[
                       styles.option,
-                      isSelected && { backgroundColor: colorScheme === 'dark' ? colors.surface : '#eef2ff' },
+                      isSelected && { backgroundColor: colors.inputBg },
                     ]}
                     onPress={() => {
                       onSelect(isAll ? null : item)

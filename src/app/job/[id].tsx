@@ -86,7 +86,7 @@ export default function JobDetailScreen() {
         />
         <Ionicons name="alert-circle-outline" size={48} color={colors.muted} />
         <Text style={[styles.notFoundText, { color: colors.muted }]}>No se encontró el empleo solicitado.</Text>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+        <TouchableOpacity onPress={() => router.back()} style={[styles.backBtn, { backgroundColor: colors.tint }]}>
           <Text style={styles.backBtnText}>Volver</Text>
         </TouchableOpacity>
       </View>
@@ -126,7 +126,7 @@ export default function JobDetailScreen() {
         )}
 
         <Text style={[styles.jobTitle, { color: colors.text }]}>{job.title}</Text>
-        <Text style={styles.companyName}>{job.companyName}</Text>
+        <Text style={[styles.companyName, { color: colors.tint }]}>{job.companyName}</Text>
       </View>
 
       <View style={styles.chipsRow}>
@@ -153,8 +153,8 @@ export default function JobDetailScreen() {
       {job.tags && job.tags.length > 0 ? (
         <View style={styles.tagsRow}>
           {job.tags.map((tag) => (
-            <View key={tag} style={styles.tagChip}>
-              <Text style={styles.tagText}>{tag}</Text>
+            <View key={tag} style={[styles.tagChip, { backgroundColor: colors.inputBg }]}>
+              <Text style={[styles.tagText, { color: colors.tint }]}>{tag}</Text>
             </View>
           ))}
         </View>
@@ -164,7 +164,7 @@ export default function JobDetailScreen() {
         <View style={[styles.salaryCard, { backgroundColor: colors.card }]}>
           <Ionicons name="cash-outline" size={24} color={colors.success} />
           <View style={styles.salaryTextCol} lightColor={colors.card} darkColor={colors.card}>
-            <Text style={styles.salaryLabel}>Salario</Text>
+            <Text style={[styles.salaryLabel, { color: colors.success }]}>Salario</Text>
             <Text style={[styles.salaryValue, { color: colors.text }]}>{job.salary}</Text>
           </View>
         </View>
@@ -185,7 +185,7 @@ export default function JobDetailScreen() {
       </View>
 
       <View style={styles.actions}>
-        <TouchableOpacity style={styles.applyButton} onPress={handleApply} activeOpacity={0.85}>
+        <TouchableOpacity style={[styles.applyButton, { backgroundColor: colors.tint }]} onPress={handleApply} activeOpacity={0.85}>
           <Ionicons name="open-outline" size={20} color="#fff" />
           <Text style={styles.applyButtonText}>Aplicar ahora</Text>
         </TouchableOpacity>
@@ -240,7 +240,6 @@ const styles = StyleSheet.create({
   backBtn: {
     paddingHorizontal: 24,
     paddingVertical: 10,
-    backgroundColor: '#3b6df0',
     borderRadius: 10,
   },
   backBtnText: {
@@ -278,7 +277,6 @@ const styles = StyleSheet.create({
   companyName: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#3b6df0',
     textAlign: 'center',
   },
   chipsRow: {
@@ -308,14 +306,12 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   tagChip: {
-    backgroundColor: '#eef2ff',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 8,
   },
   tagText: {
     fontSize: 11,
-    color: '#3b6df0',
     fontWeight: '500',
   },
   salaryCard: {
@@ -330,7 +326,6 @@ const styles = StyleSheet.create({
   salaryLabel: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#22c55e',
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 2,
@@ -364,7 +359,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: '#3b6df0',
     paddingVertical: 16,
     borderRadius: 14,
   },

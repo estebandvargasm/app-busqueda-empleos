@@ -30,7 +30,7 @@ export default function FavoritesScreen() {
         contentContainerStyle={styles.listContent}
         ListHeaderComponent={
           <View style={styles.header}>
-            <Ionicons name="heart" size={14} color="#ef4444" />
+            <Ionicons name="heart" size={14} color={colors.danger} />
             <Text style={[styles.headerText, { color: colors.muted }]}>
               {favorites.length} empleo{favorites.length === 1 ? '' : 's'} guardado{favorites.length === 1 ? '' : 's'}
             </Text>

@@ -52,7 +52,7 @@ export function JobListItem({ job, isFavorite, onToggleFavorite }: Props) {
           <Ionicons
             name={isFavorite ? 'heart' : 'heart-outline'}
             size={20}
-            color={isFavorite ? '#ef4444' : colors.muted}
+            color={isFavorite ? colors.danger : colors.muted}
           />
         </TouchableOpacity>
       </View>

@@ -89,7 +89,7 @@ export default function CustomTabBar({
               style={[
                 styles.tab,
                 focused && {
-                  backgroundColor: isDark ? '#ffffff12' : '#FFFFFF',
+                  backgroundColor: isDark ? colors.inputBg : colors.card,
                 },
               ]}
             >

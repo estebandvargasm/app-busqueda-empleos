@@ -97,7 +97,7 @@ export default function JobsListScreen() {
         data={filteredJobs}
         keyExtractor={(item) => item.id.toString()}
         onRefresh={handleRefresh}
-        refreshing={false}
+        refreshing={status === 'loading'}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>

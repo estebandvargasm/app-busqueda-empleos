@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   ActivityIndicator,
   FlatList,
@@ -41,10 +41,6 @@ export default function JobsListScreen() {
       return true
     })
   }, [jobs, searchQuery, categoryFilter, typeFilter])
-
-  const handleRefresh = useCallback(() => {
-    loadJobs()
-  }, [loadJobs])
 
   if (status === 'loading' && jobs.length === 0) {
     return (
@@ -97,7 +93,7 @@ export default function JobsListScreen() {
       <FlatList
         data={filteredJobs}
         keyExtractor={(item) => item.id.toString()}
-        onRefresh={handleRefresh}
+        onRefresh={loadJobs}
         refreshing={status === 'loading'}
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={

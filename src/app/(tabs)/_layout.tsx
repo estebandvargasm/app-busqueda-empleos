@@ -1,8 +1,6 @@
-import { Ionicons } from '@expo/vector-icons'
+import { useColorScheme } from 'react-native'
 import { Tabs } from 'expo-router'
 import Colors from '@/src/shared/theme/Colors'
-import { useColorScheme } from '@/src/shared/components/useColorScheme'
-import { useClientOnlyValue } from '@/src/shared/components/useClientOnlyValue'
 import CustomTabBar from '@/src/shared/components/CustomTabBar'
 
 export default function TabLayout() {
@@ -13,8 +11,6 @@ export default function TabLayout() {
     <Tabs
       tabBar={(props) => <CustomTabBar {...props} />}
       screenOptions={{
-        headerShown: useClientOnlyValue(false, true),
-
         headerTintColor: colors.text,
 
         headerStyle: {
@@ -31,13 +27,6 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Trabajos',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons
-              name="briefcase-outline"
-              size={size}
-              color={color}
-            />
-          ),
         }}
       />
 
@@ -45,13 +34,6 @@ export default function TabLayout() {
         name="favoritesScreen"
         options={{
           title: 'Favoritos',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons
-              name="heart-outline"
-              size={size}
-              color={color}
-            />
-          ),
         }}
       />
     </Tabs>

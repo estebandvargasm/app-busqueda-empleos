@@ -6,14 +6,13 @@ import {
   Share,
   StyleSheet,
   TouchableOpacity,
+  useColorScheme,
 } from 'react-native'
 import { useState } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import { WebView } from 'react-native-webview'
 import { Text, View } from '@/src/shared/components/Themed'
 import { useJobsStore } from '@/src/features/jobs/state/jobsStore'
-import Colors from '@/src/shared/theme/Colors'
-import { useColorScheme } from '@/src/shared/components/useColorScheme'
 
 function wrapHtml(html: string, dark: boolean): string {
   const bg = dark ? '#0f0f1a' : '#f5f6fa'
@@ -62,7 +61,6 @@ export default function JobDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const colorScheme = useColorScheme()
-  const colors = Colors[colorScheme ?? 'light']
 
   const jobs = useJobsStore((s) => s.jobs)
   const favorites = useJobsStore((s) => s.favorites)

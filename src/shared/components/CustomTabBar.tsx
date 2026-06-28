@@ -1,11 +1,8 @@
 import React from 'react'
-import { View, Pressable, StyleSheet } from 'react-native'
+import { View, Pressable, Text, StyleSheet, useColorScheme } from 'react-native'
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import { Ionicons } from '@expo/vector-icons'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-
-import Colors from '@/src/shared/theme/Colors'
-import { useColorScheme } from '@/src/shared/components/useColorScheme'
 
 export default function CustomTabBar({
   state,
@@ -13,7 +10,6 @@ export default function CustomTabBar({
   navigation,
 }: BottomTabBarProps) {
   const colorScheme = useColorScheme()
-  const colors = Colors[colorScheme ?? 'light']
   const isDark = colorScheme === 'dark'
 
   const insets = useSafeAreaInsets()
@@ -114,11 +110,19 @@ export default function CustomTabBar({
                 }
               />
 
-              <TextLabel
-                text={label}
-                focused={focused}
-                dark={isDark}
-              />
+              <Text
+                style={{
+                  fontSize: 11,
+                  fontWeight: '700',
+                  color: focused
+                    ? '#2563EB'
+                    : isDark
+                    ? 'rgba(255,255,255,.55)'
+                    : 'rgba(0,0,0,.45)',
+                }}
+              >
+                {label}
+              </Text>
             </Pressable>
           )
         })}
@@ -126,36 +130,6 @@ export default function CustomTabBar({
     </View>
   )
 }
-
-function TextLabel({
-  text,
-  focused,
-  dark,
-}: {
-  text: string
-  focused: boolean
-  dark: boolean
-}) {
-  return (
-    <View>
-      <Text
-        style={{
-          fontSize: 11,
-          fontWeight: '700',
-          color: focused
-            ? '#2563EB'
-            : dark
-            ? 'rgba(255,255,255,.55)'
-            : 'rgba(0,0,0,.45)',
-        }}
-      >
-        {text}
-      </Text>
-    </View>
-  )
-}
-
-import { Text } from 'react-native'
 
 const styles = StyleSheet.create({
   wrapper: {

@@ -1,15 +1,11 @@
-import { FlatList, StyleSheet } from 'react-native'
+import { FlatList, StyleSheet, Text } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { JobListItem } from '@/src/features/jobs/components/JobListItem'
 import { useJobsStore } from '@/src/features/jobs/state/jobsStore'
-import { Text, View } from '@/src/shared/components/Themed'
-import Colors from '@/src/shared/theme/Colors'
-import { useColorScheme } from '@/src/shared/components/useColorScheme'
+import { View } from '@/src/shared/components/Themed'
 
 export default function FavoritesScreen() {
   const { favorites, toggleFavorite, isFavorite } = useJobsStore()
-  const colorScheme = useColorScheme()
-  const colors = Colors[colorScheme ?? 'light']
 
   if (favorites.length === 0) {
     return (

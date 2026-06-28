@@ -12,7 +12,7 @@ type RemotiveJob = {
   url: string
   title: string
   company_name: string
-  company_logo_url?: string | null
+  company_logo?: string | null
   category: string
   tags?: string[]
   job_type: string
@@ -31,7 +31,7 @@ function mapToJobItem(job: RemotiveJob): JobItem {
     id: job.id,
     title: job.title,
     companyName: job.company_name,
-    companyLogoUrl: job.company_logo_url ?? undefined,
+    companyLogoUrl: job.company_logo ?? undefined,
     category: job.category,
     tags: job.tags,
     jobType: job.job_type,

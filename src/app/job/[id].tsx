@@ -9,6 +9,7 @@ import {
   useColorScheme,
 } from 'react-native'
 import { useState } from 'react'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { WebView } from 'react-native-webview'
 import { Text, View } from '@/src/shared/components/Themed'
@@ -61,6 +62,7 @@ function wrapHtml(html: string, dark: boolean): string {
 export default function JobDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
+  const insets = useSafeAreaInsets()
   const colorScheme = useColorScheme()
   const colors = Colors[colorScheme ?? 'light']
 
@@ -106,119 +108,111 @@ export default function JobDetailScreen() {
   }
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <Stack.Screen
         options={{
           title: job.companyName,
           headerTintColor: colors.text,
           headerStyle: { backgroundColor: colors.background },
           headerTitleStyle: { fontWeight: '700', fontSize: 20 },
+          headerRight: () => (
+            <TouchableOpacity onPress={handleShare} style={{ marginRight: 16 }} activeOpacity={0.7}>
+              <Ionicons name="share-social-outline" size={24} color={colors.text} />
+            </TouchableOpacity>
+          ),
         }}
       />
 
-      <View style={styles.header}>
-        {job.companyLogoUrl ? (
-          <Image source={{ uri: job.companyLogoUrl }} style={styles.logo} />
-        ) : (
-          <View style={[styles.logoPlaceholder, { backgroundColor: colors.inputBg }]}>
-            <Ionicons name="business-outline" size={36} color={colors.muted} />
-          </View>
-        )}
-
-        <Text style={[styles.jobTitle, { color: colors.text }]}>{job.title}</Text>
-        <Text style={[styles.companyName, { color: colors.tint }]}>{job.companyName}</Text>
-      </View>
-
-      <View style={styles.chipsRow}>
-        <View style={[styles.chip, { backgroundColor: colors.card }]}>
-          <Ionicons name="location-outline" size={14} color={colors.tint} />
-          <Text style={[styles.chipText, { color: colors.muted }]}>{job.candidateLocation}</Text>
-        </View>
-        <View style={[styles.chip, { backgroundColor: colors.card }]}>
-          <Ionicons name="time-outline" size={14} color={colors.tint} />
-          <Text style={[styles.chipText, { color: colors.muted }]}>
-            {new Date(job.publicationDate).toLocaleDateString()}
-          </Text>
-        </View>
-        <View style={[styles.chip, { backgroundColor: colors.card }]}>
-          <Ionicons name="pricetag-outline" size={14} color={colors.tint} />
-          <Text style={[styles.chipText, { color: colors.muted }]}>{job.category}</Text>
-        </View>
-        <View style={[styles.chip, { backgroundColor: colors.card }]}>
-          <Ionicons name="briefcase-outline" size={14} color={colors.tint} />
-          <Text style={[styles.chipText, { color: colors.muted }]}>{job.jobType}</Text>
-        </View>
-      </View>
-
-      {job.tags && job.tags.length > 0 ? (
-        <View style={styles.tagsRow}>
-          {job.tags.map((tag) => (
-            <View key={tag} style={[styles.tagChip, { backgroundColor: colors.inputBg }]}>
-              <Text style={[styles.tagText, { color: colors.tint }]}>{tag}</Text>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 20 }}>
+        <View style={styles.header}>
+          {job.companyLogoUrl ? (
+            <Image source={{ uri: job.companyLogoUrl }} style={styles.logo} />
+          ) : (
+            <View style={[styles.logoPlaceholder, { backgroundColor: colors.inputBg }]}>
+              <Ionicons name="business-outline" size={36} color={colors.muted} />
             </View>
-          ))}
-        </View>
-      ) : null}
+          )}
 
-      {job.salary ? (
-        <View style={[styles.salaryCard, { backgroundColor: colors.card }]}>
-          <Ionicons name="cash-outline" size={24} color={colors.success} />
-          <View style={styles.salaryTextCol} lightColor={colors.card} darkColor={colors.card}>
-            <Text style={[styles.salaryLabel, { color: colors.success }]}>Salario</Text>
-            <Text style={[styles.salaryValue, { color: colors.text }]}>{job.salary}</Text>
+          <Text style={[styles.jobTitle, { color: colors.text }]}>{job.title}</Text>
+          <Text style={[styles.companyName, { color: colors.tint }]}>{job.companyName}</Text>
+        </View>
+
+        <View style={[styles.infoCard, { backgroundColor: colors.card }]}>
+          <View style={styles.infoRow}>
+            <Ionicons name="location-outline" size={18} color={colors.tint} />
+            <Text style={[styles.infoText, { color: colors.text }]}>{job.candidateLocation}</Text>
           </View>
+          <View style={[styles.infoDivider, { backgroundColor: colors.border }]} />
+          <View style={styles.infoRow}>
+            <Ionicons name="briefcase-outline" size={18} color={colors.tint} />
+            <Text style={[styles.infoText, { color: colors.text }]}>{job.jobType}</Text>
+          </View>
+          <View style={[styles.infoDivider, { backgroundColor: colors.border }]} />
+          <View style={styles.infoRow}>
+            <Ionicons name="pricetag-outline" size={18} color={colors.tint} />
+            <Text style={[styles.infoText, { color: colors.text }]}>{job.category}</Text>
+          </View>
+          <View style={[styles.infoDivider, { backgroundColor: colors.border }]} />
+          <View style={styles.infoRow}>
+            <Ionicons name="time-outline" size={18} color={colors.tint} />
+            <Text style={[styles.infoText, { color: colors.text }]}>
+              {new Date(job.publicationDate).toLocaleDateString()}
+            </Text>
+          </View>
+          {job.salary ? (
+            <>
+              <View style={[styles.infoDivider, { backgroundColor: colors.border }]} />
+              <View style={styles.infoRow}>
+                <Ionicons name="cash-outline" size={18} color={colors.tint} />
+                <Text style={[styles.infoText, { color: colors.text }]}>{job.salary}</Text>
+              </View>
+            </>
+          ) : null}
         </View>
-      ) : null}
 
-      <View style={[styles.descriptionCard, { backgroundColor: colors.card }]}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>Descripción</Text>
-        <WebView
-          style={[styles.webview, { height: webHeight }]}
-          source={{ html: wrapHtml(job.descriptionHtml, colorScheme === 'dark') }}
-          scrollEnabled={false}
-          originWhitelist={['*']}
-          onMessage={(e) => {
-            const h = Number(e.nativeEvent.data)
-            if (h > 0) setWebHeight(h)
-          }}
-        />
-      </View>
+        <View style={[styles.descriptionCard, { backgroundColor: colors.card }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Descripción</Text>
+          <WebView
+            style={[styles.webview, { height: webHeight }]}
+            source={{ html: wrapHtml(job.descriptionHtml, colorScheme === 'dark') }}
+            scrollEnabled={false}
+            originWhitelist={['*']}
+            onMessage={(e) => {
+              const h = Number(e.nativeEvent.data)
+              if (h > 0) setWebHeight(h)
+            }}
+          />
+        </View>
 
-      <View style={styles.actions}>
+        {job.tags && job.tags.length > 0 ? (
+          <View style={styles.tagsRow}>
+            {job.tags.map((tag) => (
+              <View key={tag} style={[styles.tagChip, { backgroundColor: colors.inputBg }]}>
+                <Text style={[styles.tagText, { color: colors.tint }]}>{tag}</Text>
+              </View>
+            ))}
+          </View>
+        ) : null}
+      </ScrollView>
+
+      <View style={[styles.bottomBar, { backgroundColor: colors.card, borderTopColor: colors.border, paddingBottom: insets.bottom || 12 }]}>
         <TouchableOpacity style={[styles.applyButton, { backgroundColor: colors.tint }]} onPress={handleApply} activeOpacity={0.85}>
-          <Ionicons name="open-outline" size={20} color="#fff" />
           <Text style={styles.applyButtonText}>Aplicar ahora</Text>
         </TouchableOpacity>
 
-        <View style={styles.secondaryActions}>
-          <TouchableOpacity
-            style={[styles.iconButton, { backgroundColor: colors.card }]}
-            onPress={() => toggleFavorite(job)}
-            activeOpacity={0.7}
-          >
-            <Ionicons
-              name={fav ? 'heart' : 'heart-outline'}
-              size={24}
-              color={fav ? colors.danger : colors.muted}
-            />
-            <Text style={[styles.iconButtonText, fav ? { color: colors.danger } : { color: colors.muted }]}>
-              {fav ? 'Guardado' : 'Favorito'}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.iconButton, { backgroundColor: colors.card }]}
-            onPress={handleShare}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="share-outline" size={24} color={colors.muted} />
-            <Text style={[styles.iconButtonText, { color: colors.muted }]}>Compartir</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          style={[styles.favButton, { backgroundColor: colors.inputBg }]}
+          onPress={() => toggleFavorite(job)}
+          activeOpacity={0.7}
+        >
+          <Ionicons
+            name={fav ? 'heart' : 'heart-outline'}
+            size={24}
+            color={fav ? colors.danger : colors.muted}
+          />
+        </TouchableOpacity>
       </View>
-
-      <View style={{ height: 40 }} />
-    </ScrollView>
+    </View>
   )
 }
 
@@ -279,23 +273,26 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
   },
-  chipsRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    gap: 8,
+  infoCard: {
+    marginHorizontal: 12,
+    marginTop: 12,
+    borderRadius: 14,
+    padding: 4,
   },
-  chip: {
+  infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 20,
+    gap: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    backgroundColor: 'transparent',
   },
-  chipText: {
-    fontSize: 12,
+  infoDivider: {
+    height: 1,
+    marginHorizontal: 14,
+  },
+  infoText: {
+    fontSize: 14,
     fontWeight: '500',
   },
   tagsRow: {
@@ -314,29 +311,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '500',
   },
-  salaryCard: {
-    marginHorizontal: 12,
-    marginTop: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-    borderRadius: 14,
-    padding: 18,
-  },
-  salaryLabel: {
-    fontSize: 11,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: 2,
-  },
-  salaryTextCol: {
-    flex: 1,
-  },
-  salaryValue: {
-    fontSize: 20,
-    fontWeight: '700',
-  },
   descriptionCard: {
     margin: 12,
     borderRadius: 14,
@@ -350,11 +324,16 @@ const styles = StyleSheet.create({
   webview: {
     backgroundColor: 'transparent',
   },
-  actions: {
-    padding: 12,
+  bottomBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderTopWidth: 1,
   },
   applyButton: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -367,21 +346,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
-  secondaryActions: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  iconButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-    paddingVertical: 12,
+  favButton: {
+    width: 52,
+    height: 52,
     borderRadius: 14,
-  },
-  iconButtonText: {
-    fontSize: 13,
-    fontWeight: '600',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 })

@@ -29,6 +29,11 @@ function wrapHtml(html: string, dark: boolean): string {
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <style>
+  html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  * { box-sizing: border-box; }
   body {
     margin: 0;
     padding: 10px;
@@ -46,10 +51,33 @@ function wrapHtml(html: string, dark: boolean): string {
   p { margin: 0 0 10px 0; }
   h1, h2, h3, h4, h5, h6 { font-weight: 600; margin: 14px 0 8px 0; }
   h1 { font-size: 1.4em; } h2 { font-size: 1.25em; } h3 { font-size: 1.15em; }
-  img { display: none; }
+  img { max-width: 100%; height: auto; background-color: #ffffff; }
+  .table-scroll {
+    overflow-x: auto;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+    margin: 10px -10px;
+  }
+${dark ? `
+  p, span, li, td, th, h1, h2, h3, h4, h5, h6 {
+    color: ${text} !important;
+  }
+  table, tbody, tr, td, th {
+    background-color: transparent !important;
+    border-color: #3a3a4e !important;
+  }
+` : ``}
 </style>
 <script>
   window.onload = function() {
+    var tables = document.querySelectorAll('table');
+    for (var i = 0; i < tables.length; i++) {
+      var table = tables[i];
+      var wrapper = document.createElement('div');
+      wrapper.className = 'table-scroll';
+      table.parentNode.insertBefore(wrapper, table);
+      wrapper.appendChild(table);
+    }
     window.ReactNativeWebView.postMessage(document.body.scrollHeight);
   };
   window.onresize = function() {

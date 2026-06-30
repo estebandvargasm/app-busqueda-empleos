@@ -93,7 +93,7 @@ npx expo start
 
 Esto abre el servidor Metro. Una vez corriendo, tienes estas opciones:
 
-| Tecla | Qué hace |
+| Tecla |    Uso   |
 |-------|----------|
 | `a` | Abrir en Android Emulator |
 | `i` | Abrir en iOS Simulator (solo macOS) |

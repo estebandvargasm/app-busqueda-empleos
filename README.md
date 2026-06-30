@@ -194,7 +194,7 @@ src/
 │   ├── (tabs)/                 # Tab navigator
 │   │   ├── _layout.tsx         # Configuración de tabs + CustomTabBar
 │   │   ├── index.tsx           # Listado de empleos con búsqueda y filtros
-│   │   └── favorites.tsx           # Favoritos guardados
+│   │   └── favorites.tsx       # Favoritos guardados
 │   └── job/
 │       └── [id].tsx            # Detalle de empleo (HTML + botones)
 │
@@ -210,8 +210,8 @@ src/
 │
 └── shared/                     # Código compartido
     ├── components/
-    │   ├── AnimatedHeart.tsx    # Botón de favorito animado (spring)
-    │   ├── CustomTabBar.tsx     # Tab bar flotante con indicador animado
+    │   ├── AnimatedHeart.tsx   # Botón de favorito animado (spring)
+    │   ├── CustomTabBar.tsx    # Tab bar flotante con indicador animado
     │   └── FilterDropdown.tsx  # Dropdown animado para filtros
     └── theme/
         └── Colors.ts           # Paleta de colores (light/dark)

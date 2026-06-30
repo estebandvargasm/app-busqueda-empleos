@@ -12,8 +12,7 @@ import {
   View,
 } from 'react-native'
 import { useState } from 'react'
-import Animated from 'react-native-reanimated'
-import { useHeartAnimation } from '@/src/shared/hooks/useHeartAnimation'
+import AnimatedHeart from '@/src/shared/components/AnimatedHeart'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { WebView } from 'react-native-webview'
@@ -105,13 +104,6 @@ export default function JobDetailScreen() {
   const jobId = Number(id)
   const job = [...favorites, ...jobs].find((j) => j.id === jobId)
   const [webHeight, setWebHeight] = useState(400)
-
-  const { animatedStyle: animatedHeart, play: playHeart } = useHeartAnimation()
-
-  const handleToggleFavorite = () => {
-    playHeart()
-    if (job) toggleFavorite(job)
-  }
 
   if (!job) {
     return (
@@ -232,19 +224,16 @@ export default function JobDetailScreen() {
           <Text style={styles.applyButtonText}>Aplicar ahora</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
+        <AnimatedHeart
+          onPress={() => toggleFavorite(job)}
           style={[styles.favButton, { backgroundColor: colors.inputBg }]}
-          onPress={handleToggleFavorite}
-          activeOpacity={0.7}
         >
-          <Animated.View style={animatedHeart}>
-            <Ionicons
-              name={fav ? 'heart' : 'heart-outline'}
-              size={24}
-              color={fav ? colors.danger : colors.muted}
-            />
-          </Animated.View>
-        </TouchableOpacity>
+          <Ionicons
+            name={fav ? 'heart' : 'heart-outline'}
+            size={24}
+            color={fav ? colors.danger : colors.muted}
+          />
+        </AnimatedHeart>
       </View>
     </View>
   )

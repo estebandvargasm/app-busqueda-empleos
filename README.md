@@ -36,9 +36,9 @@ Construir una app en **3-5 días** que permita buscar empleos remotos, ver su de
 | Salario (si disponible) | Fila condicional con ícono `cash-outline`, solo si `job.salary` existe |
 | Fecha de publicación | Fila con `new Date(job.publicationDate).toLocaleDateString()` |
 | Descripción HTML | `WebView` con `wrapHtml()` que inyecta CSS para dark mode, scroll de tablas e imágenes |
-| Guardar/quitar favoritos | Botón fijo en bottom bar con animación de corazón (`useHeartAnimation`) |
+| Guardar/quitar favoritos | Botón fijo en bottom bar con animación de corazón (`AnimatedHeart`) |
 | Aplicar al empleo | Botón "Aplicar ahora" que abre `job.applyUrl` con `expo-web-browser` |
-| Compartir empleo | Botón en header derecho que dispara `Share.share()` nativo |
+| Compartir empleo | Header manual (`headerShown: false`) con botón de compartir que dispara `Share.share()` nativo |
 
 ### Pantalla: Favoritos
 
@@ -58,7 +58,7 @@ Construir una app en **3-5 días** que permita buscar empleos remotos, ver su de
 | React Native + TypeScript | `react-native 0.76.9`, `typescript ~5.3.3`, strict mode |
 | Zustand | Store único en `jobsStore.ts` con `create` + `persist` middleware |
 | Corre en ambas plataformas | Compatible iOS y Android, safe areas con `react-native-safe-area-context` |
-| Arquitectura reutilizable | `features/jobs/` domain-driven, `shared/` para componentes, hooks y tema |
+| Arquitectura reutilizable | `features/jobs/` domain-driven, `shared/` para componentes compartidos y tema |
 | README con instrucciones | Este documento |
 
 ---
@@ -148,12 +148,11 @@ Todo lo que usan múltiples features o que no pertenece a un dominio específico
 
 ```
 shared/
-├── components/    # CustomTabBar, FilterDropdown (agnósticos al dominio)
-├── hooks/         # useHeartAnimation (lógica de UI reutilizable)
+├── components/    # CustomTabBar, FilterDropdown, AnimatedHeart (agnósticos al dominio)
 └── theme/         # Colors (tokens de diseño light/dark)
 ```
 
-**Beneficios:** DRY sin sobre-ingeniería. Los componentes compartidos reciben props genéricas (`options`, `onSelect`) y no saben nada del dominio de empleos. El hook `useHeartAnimation` lo usan tanto `JobListItem` como `[id].tsx` sin acoplarse entre sí.
+**Beneficios:** DRY sin sobre-ingeniería. Los componentes compartidos reciben props genéricas (`options`, `onSelect`) y no saben nada del dominio de empleos. `AnimatedHeart` encapsula la animación de favorito — se usa como `<AnimatedHeart onPress={...}><Icono/></AnimatedHeart>` sin exponer Reanimated al consumidor.
 
 ### Capa de rutas (`app/`)
 
@@ -211,10 +210,9 @@ src/
 │
 └── shared/                     # Código compartido
     ├── components/
+    │   ├── AnimatedHeart.tsx    # Botón de favorito animado (spring)
     │   ├── CustomTabBar.tsx     # Tab bar flotante con indicador animado
     │   └── FilterDropdown.tsx  # Dropdown animado para filtros
-    ├── hooks/
-    │   └── useHeartAnimation.ts # Hook de animación del botón de favorito
     └── theme/
         └── Colors.ts           # Paleta de colores (light/dark)
 ```

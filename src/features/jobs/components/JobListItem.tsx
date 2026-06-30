@@ -1,5 +1,6 @@
 import { router } from 'expo-router'
 import { Image, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native'
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import { Ionicons } from '@expo/vector-icons'
 import type { JobItem } from '../types/job'
 import Colors from '@/src/shared/theme/Colors'
@@ -13,6 +14,19 @@ type Props = {
 export function JobListItem({ job, isFavorite, onToggleFavorite }: Props) {
   const colorScheme = useColorScheme()
   const colors = Colors[colorScheme ?? 'light']
+
+  const scale = useSharedValue(1)
+
+  const animatedHeart = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }))
+
+  const handleToggleFavorite = () => {
+    scale.value = withSpring(0.4, { damping: 10, stiffness: 300 }, () => {
+      scale.value = withSpring(1, { damping: 6 })
+    })
+    onToggleFavorite?.()
+  }
 
   return (
     <TouchableOpacity
@@ -46,14 +60,16 @@ export function JobListItem({ job, isFavorite, onToggleFavorite }: Props) {
 
         <TouchableOpacity
           style={styles.favoriteButton}
-          onPress={onToggleFavorite}
+          onPress={handleToggleFavorite}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Ionicons
-            name={isFavorite ? 'heart' : 'heart-outline'}
-            size={20}
-            color={isFavorite ? colors.danger : colors.muted}
-          />
+          <Animated.View style={animatedHeart}>
+            <Ionicons
+              name={isFavorite ? 'heart' : 'heart-outline'}
+              size={20}
+              color={isFavorite ? colors.danger : colors.muted}
+            />
+          </Animated.View>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>

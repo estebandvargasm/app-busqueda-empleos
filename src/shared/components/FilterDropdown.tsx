@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Modal, FlatList, Pressable, StyleSheet, Text, useColorScheme, View } from 'react-native'
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, runOnJS } from 'react-native-reanimated'
 import { Ionicons } from '@expo/vector-icons'
 import Colors from '@/src/shared/theme/Colors'
 
@@ -14,6 +15,31 @@ export default function FilterDropdown({ label, options, selected, onSelect }: F
   const [open, setOpen] = useState(false)
   const colorScheme = useColorScheme()
   const colors = Colors[colorScheme ?? 'light']
+
+  const translateY = useSharedValue(300)
+  const overlayOpacity = useSharedValue(0)
+
+  useEffect(() => {
+    if (open) {
+      translateY.value = withTiming(0, { duration: 300 })
+      overlayOpacity.value = withTiming(1, { duration: 300 })
+    }
+  }, [open])
+
+  const handleClose = () => {
+    translateY.value = withTiming(300, { duration: 200 })
+    overlayOpacity.value = withTiming(0, { duration: 200 }, (finished) => {
+      if (finished) runOnJS(setOpen)(false)
+    })
+  }
+
+  const animatedSheet = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }))
+
+  const animatedOverlay = useAnimatedStyle(() => ({
+    opacity: overlayOpacity.value,
+  }))
 
   const displayText = selected ?? label
 
@@ -33,45 +59,47 @@ export default function FilterDropdown({ label, options, selected, onSelect }: F
         <Ionicons name="chevron-down" size={12} color={selected ? colors.tint : colors.muted} />
       </Pressable>
 
-      <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
-        <Pressable style={styles.overlay} onPress={() => setOpen(false)}>
-          <View style={[styles.sheet, { backgroundColor: colors.card }]}>
-            <View style={[styles.handle, { backgroundColor: colors.border }]} />
-            <Text style={[styles.sheetTitle, { color: colors.text }]}>{label}</Text>
-
-            <FlatList
-              data={['All', ...options]}
-              keyExtractor={(item) => item}
-              renderItem={({ item }) => {
-                const isAll = item === 'All'
-                const isSelected = isAll ? selected === null : item === selected
-                return (
-                  <Pressable
-                    style={[
-                      styles.option,
-                      isSelected && { backgroundColor: colors.inputBg },
-                    ]}
-                    onPress={() => {
-                      onSelect(isAll ? null : item)
-                      setOpen(false)
-                    }}
-                  >
-                    <Text
+      <Modal visible={open} transparent animationType="none" onRequestClose={handleClose}>
+        <Animated.View style={[styles.overlay, animatedOverlay]}>
+          <Pressable style={StyleSheet.absoluteFill} onPress={handleClose} />
+          <Animated.View style={[styles.sheet, animatedSheet, { backgroundColor: colors.card }]}>
+            <Pressable onPress={() => {}}>
+              <View style={[styles.handle, { backgroundColor: colors.border }]} />
+              <Text style={[styles.sheetTitle, { color: colors.text }]}>{label}</Text>
+              <FlatList
+                data={['All', ...options]}
+                keyExtractor={(item) => item}
+                renderItem={({ item }) => {
+                  const isAll = item === 'All'
+                  const isSelected = isAll ? selected === null : item === selected
+                  return (
+                    <Pressable
                       style={[
-                        styles.optionText,
-                        { color: isSelected ? colors.tint : colors.text },
-                        isSelected && styles.optionTextSelected,
+                        styles.option,
+                        isSelected && { backgroundColor: colors.inputBg },
                       ]}
+                      onPress={() => {
+                        onSelect(isAll ? null : item)
+                        handleClose()
+                      }}
                     >
-                      {item}
-                    </Text>
-                    {isSelected && <Ionicons name="checkmark" size={18} color={colors.tint} />}
-                  </Pressable>
-                )
-              }}
-            />
-          </View>
-        </Pressable>
+                      <Text
+                        style={[
+                          styles.optionText,
+                          { color: isSelected ? colors.tint : colors.text },
+                          isSelected && styles.optionTextSelected,
+                        ]}
+                      >
+                        {item}
+                      </Text>
+                      {isSelected && <Ionicons name="checkmark" size={18} color={colors.tint} />}
+                    </Pressable>
+                  )
+                }}
+              />
+            </Pressable>
+          </Animated.View>
+        </Animated.View>
       </Modal>
     </>
   )

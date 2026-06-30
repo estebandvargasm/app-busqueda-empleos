@@ -1,5 +1,6 @@
-import React from 'react'
-import { View, Pressable, Text, StyleSheet, useColorScheme } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
+import { Pressable, StyleSheet, Text, useColorScheme, View } from 'react-native'
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import { Ionicons } from '@expo/vector-icons'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -13,30 +14,37 @@ export default function CustomTabBar({
   const colorScheme = useColorScheme()
   const isDark = colorScheme === 'dark'
   const colors = Colors[colorScheme ?? 'light']
-
   const insets = useSafeAreaInsets()
 
+  const translateX = useSharedValue(0)
+  const indicatorWidth = useSharedValue(0)
+  const tabPositions = useRef<Array<{ x: number; width: number }>>([])
+  const [layoutVersion, setLayoutVersion] = useState(0)
+
+  useEffect(() => {
+    const pos = tabPositions.current[state.index]
+    if (!pos) return
+    translateX.value = withSpring(pos.x, { damping: 20, stiffness: 200, mass: 0.8 })
+    indicatorWidth.value = withSpring(pos.width, { damping: 20, stiffness: 200, mass: 0.8 })
+  }, [state.index, layoutVersion])
+
+  const indicatorStyle = useAnimatedStyle(() => ({
+    left: translateX.value,
+    width: indicatorWidth.value,
+  }))
+
   return (
-    <View
-      style={[
-        styles.wrapper,
-        {
-          bottom: insets.bottom + 16,
-        },
-      ]}
-    >
-      <View
-        style={[
-          styles.container,
-          {
-            backgroundColor: colors.card,
-            borderColor: colors.border,
-          },
-        ]}
-      >
+    <View style={[styles.wrapper, { bottom: insets.bottom + 16 }]}>
+      <View style={[styles.container, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <Animated.View
+          style={[
+            styles.indicator,
+            indicatorStyle,
+            { backgroundColor: isDark ? colors.inputBg : colors.background },
+          ]}
+        />
         {state.routes.map((route, index) => {
           const focused = state.index === index
-
           const { options } = descriptors[route.key]
 
           const label =
@@ -50,15 +58,10 @@ export default function CustomTabBar({
 
           switch (route.name) {
             case 'index':
-              iconName = focused
-                ? 'briefcase'
-                : 'briefcase-outline'
+              iconName = focused ? 'briefcase' : 'briefcase-outline'
               break
-
             case 'favoritesScreen':
-              iconName = focused
-                ? 'heart'
-                : 'heart-outline'
+              iconName = focused ? 'heart' : 'heart-outline'
               break
           }
 
@@ -68,7 +71,6 @@ export default function CustomTabBar({
               target: route.key,
               canPreventDefault: true,
             })
-
             if (!focused && !event.defaultPrevented) {
               navigation.navigate(route.name)
             }
@@ -86,19 +88,20 @@ export default function CustomTabBar({
               key={route.key}
               onPress={onPress}
               onLongPress={onLongPress}
-              style={[
-                styles.tab,
-                focused && {
-                  backgroundColor: isDark ? colors.inputBg : colors.card,
-                },
-              ]}
+              onLayout={(e) => {
+                tabPositions.current[index] = {
+                  x: e.nativeEvent.layout.x,
+                  width: e.nativeEvent.layout.width,
+                }
+                setLayoutVersion((v) => v + 1)
+              }}
+              style={styles.tab}
             >
               <Ionicons
                 name={iconName}
                 size={22}
                 color={focused ? colors.tint : colors.tabIconDefault}
               />
-
               <Text
                 style={{
                   fontSize: 11,
@@ -124,24 +127,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
   },
-
   container: {
     flexDirection: 'row',
-
     borderRadius: 999,
-
     borderWidth: 1,
-
     paddingHorizontal: 8,
     paddingVertical: 6,
   },
-
+  indicator: {
+    position: 'absolute',
+    top: 6,
+    bottom: 6,
+    borderRadius: 999,
+  },
   tab: {
     paddingHorizontal: 20,
     paddingVertical: 10,
-
     borderRadius: 999,
-
     justifyContent: 'center',
     alignItems: 'center',
     gap: 2,

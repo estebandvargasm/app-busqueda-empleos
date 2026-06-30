@@ -2,9 +2,6 @@
 
 App de búsqueda de empleos remotos. Consume la API pública de [Remotive](https://remotive.com/api) y permite buscar, filtrar, guardar favoritos y aplicar a ofertas de trabajo.
 
-<p align="center">
-  <img src="./src/assets/images/icon.png" width="120" />
-</p>
 
 ---
 

@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Modal, FlatList, Pressable, StyleSheet, Text, useColorScheme, View } from 'react-native'
+import { useRef, useState } from 'react'
+import { Animated, FlatList, Modal, Pressable, StyleSheet, Text, useColorScheme, View } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import Colors from '@/src/shared/theme/Colors'
 
@@ -15,11 +15,29 @@ export default function FilterDropdown({ label, options, selected, onSelect }: F
   const colorScheme = useColorScheme()
   const colors = Colors[colorScheme ?? 'light']
 
+  const translateY = useRef(new Animated.Value(300)).current
+  const overlayOpacity = useRef(new Animated.Value(0)).current
+
+  const openSheet = () => {
+    setOpen(true)
+    Animated.parallel([
+      Animated.timing(translateY, { toValue: 0, duration: 300, useNativeDriver: true }),
+      Animated.timing(overlayOpacity, { toValue: 1, duration: 300, useNativeDriver: true }),
+    ]).start()
+  }
+
+  const closeSheet = () => {
+    Animated.parallel([
+      Animated.timing(translateY, { toValue: 300, duration: 200, useNativeDriver: true }),
+      Animated.timing(overlayOpacity, { toValue: 0, duration: 200, useNativeDriver: true }),
+    ]).start(() => setOpen(false))
+  }
+
   const displayText = selected ?? label
 
   return (
     <>
-      <Pressable style={[styles.trigger, { backgroundColor: colors.card }]} onPress={() => setOpen(true)}>
+      <Pressable style={[styles.trigger, { backgroundColor: colors.card }]} onPress={openSheet}>
         <Text
           style={[
             styles.triggerText,
@@ -33,9 +51,10 @@ export default function FilterDropdown({ label, options, selected, onSelect }: F
         <Ionicons name="chevron-down" size={12} color={selected ? colors.tint : colors.muted} />
       </Pressable>
 
-      <Modal visible={open} transparent animationType="slide" onRequestClose={() => setOpen(false)}>
-        <Pressable style={styles.overlay} onPress={() => setOpen(false)}>
-          <View style={[styles.sheet, { backgroundColor: colors.card }]}>
+      <Modal visible={open} transparent animationType="none" onRequestClose={closeSheet}>
+        <Animated.View style={[styles.overlay, { opacity: overlayOpacity }]}>
+          <Pressable style={StyleSheet.absoluteFill} onPress={closeSheet} />
+          <Animated.View style={[styles.sheet, { transform: [{ translateY }] }, { backgroundColor: colors.card }]}>
             <View style={[styles.handle, { backgroundColor: colors.border }]} />
             <Text style={[styles.sheetTitle, { color: colors.text }]}>{label}</Text>
             <FlatList
@@ -46,10 +65,13 @@ export default function FilterDropdown({ label, options, selected, onSelect }: F
                 const isSelected = isAll ? selected === null : item === selected
                 return (
                   <Pressable
-                    style={[styles.option, isSelected && { backgroundColor: colors.inputBg }]}
+                    style={[
+                      styles.option,
+                      isSelected && { backgroundColor: colors.inputBg },
+                    ]}
                     onPress={() => {
                       onSelect(isAll ? null : item)
-                      setOpen(false)
+                      closeSheet()
                     }}
                   >
                     <Text
@@ -66,8 +88,8 @@ export default function FilterDropdown({ label, options, selected, onSelect }: F
                 )
               }}
             />
-          </View>
-        </Pressable>
+          </Animated.View>
+        </Animated.View>
       </Modal>
     </>
   )

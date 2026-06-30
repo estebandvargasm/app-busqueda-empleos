@@ -2,6 +2,7 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
 import {
   Image,
+  Pressable,
   ScrollView,
   Share,
   StyleSheet,
@@ -115,14 +116,7 @@ export default function JobDetailScreen() {
   if (!job) {
     return (
       <View style={[styles.centered, { backgroundColor: colors.background }]}>
-        <Stack.Screen
-          options={{
-            title: 'Empleo',
-            headerTintColor: colors.text,
-            headerStyle: { backgroundColor: colors.background },
-            headerTitleStyle: { fontWeight: '700', fontSize: 20 },
-          }}
-        />
+        <Stack.Screen options={{ headerShown: false }} />
         <Ionicons name="alert-circle-outline" size={48} color={colors.muted} />
         <Text style={[styles.notFoundText, { color: colors.muted }]}>No se encontró el empleo solicitado.</Text>
         <TouchableOpacity onPress={() => router.back()} style={[styles.backBtn, { backgroundColor: colors.tint }]}>
@@ -140,25 +134,26 @@ export default function JobDetailScreen() {
 
   const handleShare = () => {
     Share.share({
+      title: job.title,
       message: `${job.title} en ${job.companyName}\n${job.applyUrl}`,
     })
   }
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
-      <Stack.Screen
-        options={{
-          title: job.companyName,
-          headerTintColor: colors.text,
-          headerStyle: { backgroundColor: colors.background },
-          headerTitleStyle: { fontWeight: '700', fontSize: 20 },
-          headerRight: () => (
-            <TouchableOpacity onPress={handleShare} style={{ marginRight: 16 }} activeOpacity={0.7}>
-              <Ionicons name="share-social-outline" size={24} color={colors.text} />
-            </TouchableOpacity>
-          ),
-        }}
-      />
+      <Stack.Screen options={{ headerShown: false }} />
+
+      <View style={[styles.customHeader, { backgroundColor: colors.card, borderBottomColor: colors.border, paddingTop: insets.top + 8 }]}>
+        <Pressable onPress={() => router.back()} style={styles.headerBack}>
+          <Ionicons name="chevron-back" size={24} color={colors.text} />
+        </Pressable>
+        <Text style={[styles.headerTitle, { color: colors.text }]} numberOfLines={1}>
+          {job.companyName}
+        </Text>
+        <Pressable onPress={handleShare} style={styles.headerShare}>
+          <Ionicons name="share-social-outline" size={24} color={colors.text} />
+        </Pressable>
+      </View>
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 20 }}>
         <View style={styles.header}>
@@ -276,6 +271,26 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
     fontSize: 14,
+  },
+  customHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+  },
+  headerBack: {
+    padding: 8,
+  },
+  headerTitle: {
+    flex: 1,
+    fontWeight: '700',
+    fontSize: 18,
+    textAlign: 'center',
+    marginHorizontal: 8,
+  },
+  headerShare: {
+    padding: 8,
   },
   header: {
     paddingHorizontal: 24,

@@ -1,7 +1,69 @@
-# App Búsqueda de Empleos
+# Prueba Técnica — Senior UI Developer @ Redarbor
 
-App de búsqueda de empleos remotos. Consume la API pública de [Remotive](https://remotive.com/api) y permite buscar, filtrar, guardar favoritos y aplicar a ofertas de trabajo.
+App de búsqueda de empleos remotos. Construida como parte del proceso de selección para el cargo de **Senior UI Developer** en **Redarbor**. Consume la API pública de [Remotive](https://remotive.com/api).
 
+<p align="center">
+  <img src="./src/assets/images/icon.png" width="120" />
+</p>
+
+---
+
+## El reto
+
+Construir una app en **3-5 días** que permita buscar empleos remotos, ver su detalle, guardar favoritos con persistencia local y aplicar a las ofertas. El stack requerido es **Expo SDK 52, React Native, TypeScript y Zustand**. La app debe correr en ambas plataformas con `npx expo start`.
+
+---
+
+## Requisitos vs Implementación
+
+### Pantalla: Listado de Empleos
+
+| Requisito | Implementación |
+|-----------|---------------|
+| Lista con logo, título, empresa, ubicación y fecha | `JobListItem.tsx` — tarjeta con imagen/placeholder, textos y corazón de favorito |
+| Búsqueda por texto (título + empresa) | `TextInput` con filtro en `useMemo` que aplica `toLowerCase().includes()` sobre ambos campos |
+| Filtro por categoría (`/categories`) | `FilterDropdown.tsx` alimentado por `fetchCategories()` desde el store |
+| Filtro por tipo de empleo | Segundo `FilterDropdown` con valores únicos extraídos de `jobs.map(j => j.jobType)` |
+| Indicador visual de favoritos | Ícono de corazón relleno (`heart`) vs contorno (`heart-outline`) con color `danger` |
+| Pull-to-refresh | `FlatList` con `refreshing={status === 'loading'}` y `onRefresh={loadJobs}` |
+| Estados: cargando | `ActivityIndicator` centrado con texto "Cargando empleos..." |
+| Estados: error | Ícono `cloud-offline-outline` + mensaje del error |
+| Estados: sin resultados | Ícono `briefcase-outline` + texto contextual (con/sin filtros activos) |
+
+### Pantalla: Detalle de Empleo
+
+| Requisito | Implementación |
+|-----------|---------------|
+| Logo de empresa | `Image` con `companyLogoUrl`, fallback a placeholder con ícono `business-outline` |
+| Título, empresa, ubicación | Header con `jobTitle` y `companyName`, tarjeta de info con íconos |
+| Categoría y tipo de empleo | Filas dentro de la tarjeta de info con íconos `pricetag-outline` y `briefcase-outline` |
+| Salario (si disponible) | Fila condicional con ícono `cash-outline`, solo si `job.salary` existe |
+| Fecha de publicación | Fila con `new Date(job.publicationDate).toLocaleDateString()` |
+| Descripción HTML | `WebView` con `wrapHtml()` que inyecta CSS para dark mode, scroll de tablas e imágenes |
+| Guardar/quitar favoritos | Botón fijo en bottom bar con animación de corazón (`useHeartAnimation`) |
+| Aplicar al empleo | Botón "Aplicar ahora" que abre `job.applyUrl` con `expo-web-browser` |
+| Compartir empleo | Botón en header derecho que dispara `Share.share()` nativo |
+
+### Pantalla: Favoritos
+
+| Requisito | Implementación |
+|-----------|---------------|
+| Lista de favoritos guardados | `FlatList` con `JobListItem` reutilizado, datos de `useJobsStore().favorites` |
+| Persistencia al cerrar la app | Zustand `persist` middleware con `AsyncStorage` como storage |
+| Eliminar de favoritos | Mismo `toggleFavorite()` del store, togglea desde el corazón en la tarjeta |
+| Navegar al detalle | `router.push(/job/[id])` al tocar la tarjeta, igual que en el listado |
+| Estado vacío | Ícono `heart-outline` grande + "Sin favoritos aún" + instrucciones |
+
+### Generales
+
+| Requisito | Implementación |
+|-----------|---------------|
+| Expo SDK 52 | `expo ~52.0.49`, `expo-router ~4.0.22` |
+| React Native + TypeScript | `react-native 0.76.9`, `typescript ~5.3.3`, strict mode |
+| Zustand | Store único en `jobsStore.ts` con `create` + `persist` middleware |
+| Corre en ambas plataformas | Compatible iOS y Android, safe areas con `react-native-safe-area-context` |
+| Arquitectura reutilizable | `features/jobs/` domain-driven, `shared/` para componentes, hooks y tema |
+| README con instrucciones | Este documento |
 
 ---
 
@@ -51,16 +113,6 @@ Esto abre el servidor Metro. Una vez corriendo, tienes estas opciones:
 3. La app se carga al instante
 
 > Si Expo Go no puede conectarse, asegúrate de que el celular y la computadora estén en la misma red WiFi.
-
-### 4. Compilar para producción
-
-```bash
-# APK de Android
-npx eas build -p android --profile preview
-
-# IPA de iOS (requiere Apple Developer Program)
-npx eas build -p ios
-```
 
 ---
 
@@ -129,39 +181,6 @@ src/
 | **Expo Web Browser** | Abrir URL de aplicación en navegador externo |
 | **Expo System UI** | Color de fondo de la ventana nativa (evita flash blanco en modo oscuro) |
 | **Ionicons** | Iconografía |
-
----
-
-## Funcionalidades
-
-### Listado de empleos
-- Búsqueda por texto (título o empresa)
-- Filtro por categoría y tipo de trabajo con dropdowns animados
-- Pull-to-refresh para recargar
-- Botón de favorito con animación de escala
-
-### Detalle de empleo
-- Logo, título y empresa
-- Tarjeta de info con ubicación, tipo, categoría, fecha y salario
-- Descripción HTML completa con soporte para modo oscuro
-  - Tablas de MS Office con scroll horizontal individual
-  - Imágenes con fondo blanco para visibilidad en modo oscuro
-  - Colores de texto forzados para legibilidad
-- Botón **Aplicar ahora** fijo en la parte inferior (abre navegador externo)
-- Botón de **Favorito** fijo con animación de corazón
-- Botón de **Compartir** en la barra superior (share sheet nativo)
-
-### Favoritos
-- Persistencia local con AsyncStorage
-- Vista dedicada con lista de empleos guardados
-- Se puede agregar o quitar desde cualquier pantalla
-
-### UX/UI
-- Modo oscuro automático (respeta la configuración del sistema)
-- Tab bar flotante con indicador animado (spring physics)
-- Transiciones nativas entre pantallas
-- Safe areas en iPhone con notch y Android con navigation bar
-- Estados de carga, error y vacío en todas las pantallas
 
 ---
 
